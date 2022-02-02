@@ -1,0 +1,8 @@
+version: "3.7"
+services: 
+  database_mongo:
+    ports:
+      - "27017:27017"
+    image: mongo
+    environment:
+      - DB_PASS=root
