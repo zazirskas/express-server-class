@@ -1,31 +1,29 @@
-const express = require("express");
-const { movimentacaoRouter, usuariosRouter } = require('./Routes');
+const express = require('express');
+const {
+	movimentacaoRouter,
+	usuariosRouter,
+	registryUserRouter,
+	userRouter,
+} = require('./Routes');
 const server = express();
 const logger = require('./Middleware/logger');
-const handleError = require("./Errors/handleError");
-const formatResponse = require('./Middleware/formatResponse')
-const { generateToken, authenticateToken } = require("./Services/Authentication/authModule");
+const formatResponse = require('./Middleware/formatResponse');
+const handleError = require('./Errors/handleError');
+const {
+	generateToken,
+	authenticateToken,
+} = require('./Services/Authentication/authModule');
 const cryptoJs = require('crypto-js');
-const usuario = require('./Database/Models/usuarios');
 
 server.use(express.json());
 server.use(logger);
 
-server.post('/register', (req, res) => {
-	const username = req.query.username;
-	const passEnc = cryptoJs.HmacSHA256(req.query.password, process.env.SALT);
-	const newUser = new usuario();
-	newUser.username = username;
-	newUser.passwordEnc = passEnc;
-	newUser.save();
+server.use('/register', registryUserRouter);
+server.use('/user', userRouter);
 
-	const token = generateToken({ role: "user" });
-	res.status(200).json(token);
-});
-
-server.get("/error", (req, res) => {
+server.get('/error', (req, res) => {
 	throw new Error();
-})
+});
 
 server.use(authenticateToken);
 
