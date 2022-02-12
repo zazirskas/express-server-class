@@ -1,5 +1,4 @@
 const { Router } = require('express');
-const req = require('express/lib/request');
 const { checkMovimentacaoType, findMovimentacoesByType, createNewMovimentacao } = require('../Services/movimentacoes');
 const movimentacao = require('../Database/Models/movimentacao');
 

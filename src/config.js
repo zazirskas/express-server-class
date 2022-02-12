@@ -1,5 +1,8 @@
+const dotenv = require("dotenv")
+dotenv.config({path: "src/.env"});
+
 const {
-  PORT = 2000,
+  PORT,
   DB_URL,
   DB_PASS,
 } = process.env;

@@ -1,36 +1,33 @@
 const express = require("express");
-const { movimentacaoRouter, usuariosRouter } = require('./Routes');
+const {
+	movimentacaoRouter,
+	usuariosRouter,
+	registryUserRouter,
+	userRouter,
+	uploadRouter,
+} = require("./Routes");
 const server = express();
-const logger = require('./Middleware/logger');
+const fileUpload = require("express-fileupload");
+const logger = require("./Middleware/logger");
+const formatResponse = require("./Middleware/formatResponse");
 const handleError = require("./Errors/handleError");
-const formatResponse = require('./Middleware/formatResponse')
-const { generateToken, authenticateToken } = require("./Services/Authentication/authModule");
-const cryptoJs = require('crypto-js');
-const usuario = require('./Database/Models/usuarios');
+const {
+	authenticateToken,
+} = require("./Services/Authentication/authModule");
 
 server.use(express.json());
 server.use(logger);
+server.use(fileUpload());
 
-server.post('/register', (req, res) => {
-	const username = req.query.username;
-	const passEnc = cryptoJs.HmacSHA256(req.query.password, process.env.SALT);
-	const newUser = new usuario();
-	newUser.username = username;
-	newUser.passwordEnc = passEnc;
-	newUser.save();
-
-	const token = generateToken({ role: "user" });
-	res.status(200).json(token);
-});
-
-server.get("/error", (req, res) => {
-	throw new Error();
-})
+server.use("/register", registryUserRouter);
+server.use("/user", userRouter);
 
 server.use(authenticateToken);
 
-server.use('/movimentacao', movimentacaoRouter);
-server.use('/usuarios', usuariosRouter);
+server.use("/upload", uploadRouter);
+server.use('/arquivos', express.static('src/public'));
+server.use("/movimentacao", movimentacaoRouter);
+server.use("/usuarios", usuariosRouter);
 
 server.use(formatResponse);
 server.use(handleError);
