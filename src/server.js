@@ -1,34 +1,33 @@
-const express = require('express');
+const express = require("express");
 const {
 	movimentacaoRouter,
 	usuariosRouter,
 	registryUserRouter,
 	userRouter,
-} = require('./Routes');
+	uploadRouter,
+} = require("./Routes");
 const server = express();
-const logger = require('./Middleware/logger');
-const formatResponse = require('./Middleware/formatResponse');
-const handleError = require('./Errors/handleError');
+const fileUpload = require("express-fileupload");
+const logger = require("./Middleware/logger");
+const formatResponse = require("./Middleware/formatResponse");
+const handleError = require("./Errors/handleError");
 const {
-	generateToken,
 	authenticateToken,
-} = require('./Services/Authentication/authModule');
-const cryptoJs = require('crypto-js');
+} = require("./Services/Authentication/authModule");
 
 server.use(express.json());
 server.use(logger);
+server.use(fileUpload());
 
-server.use('/register', registryUserRouter);
-server.use('/user', userRouter);
-
-server.get('/error', (req, res) => {
-	throw new Error();
-});
+server.use("/register", registryUserRouter);
+server.use("/user", userRouter);
 
 server.use(authenticateToken);
 
-server.use('/movimentacao', movimentacaoRouter);
-server.use('/usuarios', usuariosRouter);
+server.use("/upload", uploadRouter);
+server.use('/arquivos', express.static('src/public'));
+server.use("/movimentacao", movimentacaoRouter);
+server.use("/usuarios", usuariosRouter);
 
 server.use(formatResponse);
 server.use(handleError);

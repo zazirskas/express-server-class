@@ -1,1 +1,1 @@
-const { usuario } = require('../../Database/Models/usuarios');
+const usuario = require('../../Database/Models/usuarios');

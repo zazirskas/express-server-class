@@ -1,27 +1,13 @@
 const { Router } = require('express');
+const { login } = require('./../Services/Authentication/authModule');
 
 const router = Router();
-
-router.get('', (req, res) => {
-	res.status(200).json({
-		usuario: 'teste',
-		nome: 'teste',
-		conta: 'teste',
-	});
-});
-
+ 
 router.post('/login', async (req, res) => {
-	const { user, password } = req.body;
-	const returnReq = await login(user, password);
+	const { username, password } = req.body;
+	const returnReq = await login(username, password);
 
-	res.status(201).send(returnReq);
-});
-
-router.post('', (req, res) => {
-	const body = req.query;
-	res.status(200).json({
-		body,
-	});
+	res.status(200).send(returnReq);
 });
 
 router.delete('', (req, res) => {

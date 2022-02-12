@@ -29,19 +29,23 @@ const login = async (username, password) => {
 		const foundUsername = await usuario.findOne({ 
 			username: username
 		});
-		if (!foundUsername) throw Error("Usuário não encontrado!");
-
+		if (!foundUsername) throw Error("Usuário e/ou senha não encontrado!");
+		console.log(foundUsername);
+		
 		const foundPassEnc = await usuario.findOne({
-			passwordEnc: cryptoJs.HmacSHA256(password, process.env.SALT),
+			passwordEnc: cryptoJs.HmacSHA256(password, process.env.SALT).toString(),
 		});
 
-		if (!foundPassEnc) throw Error("Senha não confere!");
+		console.log(foundPassEnc);
+
+		if (!foundPassEnc) throw Error("Usuário e/ou senha não encontrado!");
+
 		return {
 			status: "ok",
 			token: generateToken({ role: "user"}),
 		}
 	} catch (err) {
-		return err;
+		return err.message;
 	}
 };
 
